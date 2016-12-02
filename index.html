@@ -1,0 +1,115 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<meta name="apple-touch-icon" content="/apple-touch-icon.png">
+<!-- <meta name="" -->
+<title>Oggle</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body, html {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	font-family: -apple-system, BlinkMacSystemFont, 
+		"Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", 
+		"Fira Sans", "Droid Sans", "Helvetica Neue", 
+		sans-serif;
+
+	background: #26e;
+}
+
+#grid {
+	font-size: 2rem;
+	width: 20rem;
+	height: 20rem;
+	background: orange;
+	border-radius: 1rem;
+	border-spacing: .5rem;
+	border-collapse: separate;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+#grid td {
+	width: 4rem;
+	height: 4rem;
+	line-height: 4rem;
+	text-align: center;
+	background-color: #f5f5f5;
+	background-image: radial-gradient(circle, white 69%, #f5f5f5 70%);
+	border-radius: .3rem;
+}
+</style>
+
+<table id="grid">
+<tr><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td></tr>
+<tr><td></td><td></td><td></td><td></td></tr>
+</table>
+
+<script>
+var dice = [
+	['A', 'A', 'C', 'I', 'O', 'T'],
+	['A', 'B', 'I', 'L', 'T', 'Y'],
+	['A', 'B', 'J', 'M', 'O', 'Qu'],
+	['A', 'C', 'D', 'E', 'M', 'P'],
+	['A', 'C', 'E', 'L', 'R', 'S'],
+	['A', 'D', 'E', 'N', 'V', 'Z'],
+	['A', 'H', 'M', 'O', 'R', 'S'],
+	['B', 'I', 'F', 'O', 'R', 'X'],
+	['D', 'E', 'N', 'O', 'S', 'W'],
+	['D', 'K', 'N', 'O', 'T', 'U'],
+	['E', 'E', 'F', 'H', 'I', 'Y'],
+	['E', 'G', 'K', 'L', 'U', 'Y'],
+	['E', 'G', 'I', 'N', 'T', 'V'],
+	['E', 'H', 'I', 'N', 'P', 'S'],
+	['E', 'L', 'P', 'S', 'T', 'U'],
+	['G', 'I', 'L', 'R', 'U', 'W']
+];
+
+var grid = document.getElementById('grid');
+var cells = document.querySelectorAll('#grid td');
+
+function rand(a, b) {
+	return a + Math.floor(Math.random() * (b - a));
+}
+
+function shuffle(arr) {
+	var out = arr.slice();
+
+	for(var i = arr.length - 1; i > 0; --i) {
+		var j = Math.floor(i * Math.random());
+		var t = out[i];
+		out[i] = out[j];
+		out[j] = t;
+	}
+
+	return out;
+}
+
+function randomRotation() {
+	return 'rotate('+ (90 * Math.floor(4 * Math.random()) + (Math.random() * 4 - 2)) +'deg)';
+}
+
+function doGrid() {
+	shuffle(dice).forEach(function(die, i) {
+		var letter = die[Math.floor(Math.random() * 6)];
+		cells[i].innerHTML = letter;
+		cells[i].style.transform = randomRotation();
+		cells[i].style.textDecoration = letter === 'W' ? 'underline' : 'none';
+	});
+}
+
+grid.addEventListener('click', doGrid);
+
+</script>
