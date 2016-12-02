@@ -1,8 +1,22 @@
 <!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="initial-scale=1, width=device-width">
-<meta name="apple-touch-icon" content="/apple-touch-icon.png">
-<!-- <meta name="" -->
+<meta name="apple-touch-icon" content="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2266ee" />
+<meta name="apple-mobile-web-app-title" content="Oggle">
+<meta name="application-name" content="Oggle">
+<meta name="og:title" content="Oggle">
+<meta name="og:description" content="Timed word grid dice game, yeah, that one">
+<meta name="og:type" content="website">
+<meta name="og:image" content="https://blog.153.io/Oggle/apple-touch-icon.png">
+<meta name="og:url" content="https://blog.153.io/Oggle">
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Oggle" />
+<meta name="twitter:description" content="Timed word grid dice game, yeah, that one" />
+<meta name="twitter:image" content="https://blog.153.io/Oggle/apple-touch-icon.png" />
+
 <title>Oggle</title>
 
 <style>
@@ -17,6 +31,7 @@ body {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	flex-direction: column;
 
 	font-family: -apple-system, BlinkMacSystemFont, 
 		"Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", 
@@ -27,26 +42,36 @@ body {
 }
 
 #grid {
-	font-size: 2rem;
-	width: 20rem;
-	height: 20rem;
+	font-size: 4vmax;
+	width: 40vmax;
+	height: 40vmax;
 	background: orange;
-	border-radius: 1rem;
-	border-spacing: .5rem;
+	border-radius: 2vmax;
+	border-spacing: 1vmax;
 	border-collapse: separate;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
+	cursor: pointer;
 }
 
 #grid td {
-	width: 4rem;
-	height: 4rem;
-	line-height: 4rem;
+	width: 8vmax;
+	height: 8vmax;
+	line-height: 8vmax;
 	text-align: center;
 	background-color: #f5f5f5;
 	background-image: radial-gradient(circle, white 69%, #f5f5f5 70%);
-	border-radius: .3rem;
+	border-radius: .6vmax;
+}
+
+.flash-body {
+	animation: 1s flash-body 3 linear;
+}
+
+@keyframes flash-body {
+	0% { background: #68f; }
+	100% { background: #26e; }
 }
 </style>
 
@@ -56,6 +81,8 @@ body {
 <tr><td></td><td></td><td></td><td></td></tr>
 <tr><td></td><td></td><td></td><td></td></tr>
 </table>
+
+<h1 id="timer">&nbsp;</h1>
 
 <script>
 var dice = [
@@ -78,6 +105,7 @@ var dice = [
 ];
 
 var grid = document.getElementById('grid');
+var timer = document.getElementById('timer');
 var cells = document.querySelectorAll('#grid td');
 
 function rand(a, b) {
@@ -101,15 +129,41 @@ function randomRotation() {
 	return 'rotate('+ (90 * Math.floor(4 * Math.random()) + (Math.random() * 4 - 2)) +'deg)';
 }
 
-function doGrid() {
+var gameEnds;
+
+function startGame() {
 	shuffle(dice).forEach(function(die, i) {
 		var letter = die[Math.floor(Math.random() * 6)];
 		cells[i].innerHTML = letter;
 		cells[i].style.transform = randomRotation();
 		cells[i].style.textDecoration = letter === 'W' ? 'underline' : 'none';
 	});
+
+	document.body.className = '';
+	timer.style.color = 'white';
+	gameEnds = performance.now() + 3 * 60 * 1000;
 }
 
-grid.addEventListener('click', doGrid);
+requestAnimationFrame(function loop() {
+	var now = performance.now();
+	if(gameEnds) {
+		if(gameEnds > now) {
+			var δ = gameEnds - now;
+			var seconds = Math.ceil(δ / 1000);
+			var m = Math.floor(seconds / 60);
+			var s = seconds % 60;
+			timer.innerHTML = m + ':' + (s < 10 ? '0' + s : s);
+		} else {
+			document.body.className = 'flash-body';
+			timer.innerHTML = 'Game over!';
+			timer.style.color = '#d10';
+			gameEnds = false;
+		}
+	}
+
+	requestAnimationFrame(loop);
+});
+
+grid.addEventListener('click', startGame);
 
 </script>
