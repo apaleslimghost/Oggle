@@ -133,42 +133,68 @@ function randomRotation() {
 	return 'rotate('+ (90 * Math.floor(4 * Math.random()) + (Math.random() * 4 - 2)) +'deg)';
 }
 
-var gameEnds;
+var timers = {gameStarts: false, gameEnds: false};
+var countdown = 10 * 1000;
+var gameLength = 3 * 60 * 1000;
 
-function startGame() {
+function resetBoard() {
+	document.body.className = '';
+	timer.style.color = 'white';
+
+	cells.forEach(function(cell) {
+		cell.innerHTML = '';
+		cell.style.transform = '';
+	});
+}
+
+function shuffleBoard() {
 	shuffle(dice).forEach(function(die, i) {
 		var letter = die[Math.floor(Math.random() * 6)];
 		cells[i].innerHTML = letter;
 		cells[i].style.transform = randomRotation();
 		cells[i].style.textDecoration = letter === 'W' ? 'underline' : 'none';
 	});
-
-	document.body.className = '';
-	timer.style.color = 'white';
-	gameEnds = performance.now() + 3 * 60 * 1000;
 }
 
-requestAnimationFrame(function loop() {
+function readyGame() {
+	timers.gameStarts = performance.now() + countdown;
+	resetBoard();
+	setTimeout(startGame, countdown);
+}
+
+function startGame() {
+	timers.gameEnds = performance.now() + gameLength;
+	shuffleBoard();
+}
+
+function runTimer(name, onFinish) {
 	var now = performance.now();
-	if(gameEnds) {
-		if(gameEnds > now) {
-			var δ = gameEnds - now;
+	if(timers[name]) {
+		if(timers[name] > now) {
+			var δ = timers[name] - now;
 			var seconds = Math.ceil(δ / 1000);
 			var m = Math.floor(seconds / 60);
 			var s = seconds % 60;
 			timer.innerHTML = m + ':' + (s < 10 ? '0' + s : s);
 		} else {
-			document.body.className = 'flash-body';
-			timer.innerHTML = 'Game over!';
-			timer.style.color = '#d10';
-			gameEnds = false;
+			timers[name] = false;
+			if(onFinish) onFinish();
 		}
 	}
+}
+
+requestAnimationFrame(function loop() {
+	runTimer('gameStart');
+	runTimer('gameEnd', function() {
+		document.body.className = 'flash-body';
+		timer.innerHTML = 'Game over!';
+		timer.style.color = '#d10';
+	});
 
 	requestAnimationFrame(loop);
 });
 
-grid.addEventListener('click', startGame);
+grid.addEventListener('click', readyGame);
 
 </script>
 </html>
