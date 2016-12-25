@@ -184,8 +184,8 @@ function runTimer(name, onFinish) {
 }
 
 requestAnimationFrame(function loop() {
-	runTimer('gameStart');
-	runTimer('gameEnd', function() {
+	runTimer('gameStarts');
+	runTimer('gameEnds', function() {
 		document.body.className = 'flash-body';
 		timer.innerHTML = 'Game over!';
 		timer.style.color = '#d10';
