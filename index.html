@@ -157,7 +157,7 @@ function shuffleBoard() {
 }
 
 function readyGame() {
-	if(!timers.gameStarts && !timers.gameEnds) {
+	if(!timers.gameStarts || !timers.gameEnds) {
 		timers.gameStarts = performance.now() + countdown;
 		resetBoard();
 		setTimeout(startGame, countdown);
