@@ -152,7 +152,7 @@ function shuffleBoard() {
 		var letter = die[Math.floor(Math.random() * 6)];
 		cells[i].innerHTML = letter;
 		cells[i].style.transform = randomRotation();
-		cells[i].style.textDecoration = letter === 'W' ? 'underline' : 'none';
+		cells[i].style.textDecoration = ['W', 'Z'].includes(letter) ? 'underline' : 'none';
 	});
 }
 
