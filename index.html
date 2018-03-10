@@ -134,7 +134,7 @@ function randomRotation() {
 }
 
 var timers = {gameStarts: false, gameEnds: false};
-var countdown = 10 * 1000;
+var countdown = 5 * 1000;
 var gameLength = 3 * 60 * 1000;
 
 function resetBoard() {
@@ -157,12 +157,14 @@ function shuffleBoard() {
 }
 
 function readyGame() {
+	timers.gameEnds = false;
 	timers.gameStarts = performance.now() + countdown;
 	resetBoard();
 	setTimeout(startGame, countdown);
 }
 
 function startGame() {
+	timers.gameStarts = false;
 	timers.gameEnds = performance.now() + gameLength;
 	shuffleBoard();
 }
