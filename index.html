@@ -152,15 +152,17 @@ function shuffleBoard() {
 		var letter = die[Math.floor(Math.random() * 6)];
 		cells[i].innerHTML = letter;
 		cells[i].style.transform = randomRotation();
-		cells[i].style.textDecoration = letter === 'W' ? 'underline' : 'none';
+		cells[i].style.textDecoration = ['W', 'Z'].includes(letter) ? 'underline' : 'none';
 	});
 }
 
 function readyGame() {
-	timers.gameEnds = false;
-	timers.gameStarts = performance.now() + countdown;
-	resetBoard();
-	setTimeout(startGame, countdown);
+	if(!timers.gameStarts || !timers.gameEnds) {
+		timers.gameEnds = false;
+		timers.gameStarts = performance.now() + countdown;
+		resetBoard();
+		setTimeout(startGame, countdown);
+	}
 }
 
 function startGame() {
@@ -186,8 +188,8 @@ function runTimer(name, onFinish) {
 }
 
 requestAnimationFrame(function loop() {
-	runTimer('gameStart');
-	runTimer('gameEnd', function() {
+	runTimer('gameStarts');
+	runTimer('gameEnds', function() {
 		document.body.className = 'flash-body';
 		timer.innerHTML = 'Game over!';
 		timer.style.color = '#d10';
