@@ -162,7 +162,7 @@ function shuffleBoard() {
 		var letter = die[Math.floor(Math.random() * 6)];
 		if(letter === 'Q') letter = 'Qu';
 		cells[i].innerHTML = letter;
-		cells[i].style.transform = randomRotation();
+		//cells[i].style.transform = randomRotation();
 		cells[i].style.textDecoration = ['W', 'Z'].includes(letter) ? 'underline' : 'none';
 	});
 }
